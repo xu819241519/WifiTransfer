@@ -9,6 +9,7 @@ import com.goertek.transferlibrary.utils.LogUtils;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.BindException;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -21,6 +22,7 @@ import java.net.SocketTimeoutException;
 public class TcpTransfer implements ITransfer {
 
     private static final String TAG = "TcpTransfer";
+    private static final int CONNECTION_TIME_OUT = 1000;
 
     private String mIP;
 
@@ -142,7 +144,8 @@ public class TcpTransfer implements ITransfer {
                 public void run() {
                     LogUtils.d(TAG, "tcp client");
                     try {
-                        mClientSocket = new Socket(mIP, mPort);
+                        mClientSocket = new Socket();
+                        mClientSocket.connect(new InetSocketAddress(mIP,mPort),CONNECTION_TIME_OUT);
                         //发送验证消息
                         mClientSocket.getOutputStream().write(TransferProtocol.packConnectionData());
                         mClientSocket.getOutputStream().flush();
